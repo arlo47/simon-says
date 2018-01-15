@@ -42,23 +42,8 @@ let game = {
     }
   },
   userResponse: function(e) {
-    //pushes one of the 4 colors to userSequence using the clicked DOM element's id
-    switch (e.target.id) {
-      case 'red':
-        userSequence.push('red');
-        break;
-      case 'blue':
-        userSequence.push('blue');
-        break;
-      case 'green':
-        userSequence.push('green');
-        break;
-      case 'yellow':
-        userSequence.push('yellow');
-        break;
-      default:
-          console.log('game.userResponse() error');
-    }
+    //e.target.id returns the html id as a string, .push() adds it to userSequence
+    userSequence.push(e.target.id);
   },
   compareSequences: function() {
     //Checks if the two sequences are equal in length before doing any other tests
@@ -79,22 +64,23 @@ let game = {
   }
 };
 
-function sequenceEffects() {
 
+function sequenceEffects() {
   let i = 0;
-  if (red.classList.conatins('opacity')) {
+
+  if (red.classList.contains('opacity')) {
     red.classList.remove('opacity');
   }
+
   setTimeout(function() {
     red.classList.add('opacity');
-    i++
-    if (i < 3) {
+    i++;
+    if (i < 1) {
       sequenceEffects();
     }
   }, 1000);
-
-
 }
+
 
 
 
