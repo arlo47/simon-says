@@ -64,23 +64,48 @@ let game = {
 };
 
 
-function sequenceEffects() {
-  let colorNodeList = document.querySelectorAll('.circle');
+let colorNodeList = document.querySelectorAll('.circle');
+let i = 0;
+let j = 0;
 
-  for (let i = 0; i < simonSequence.length; i++) {
-    for (var j = 0; j < colorNodeList.length; j++) {
-      if (colorNodeList[j].id === simonSequence[i]) {
-        colorNodeList[j].classList.add('opacity');
-        removeOpacity(j);
-      }
-    }
-  }
-  function removeOpacity(j) {
-    setTimeout(function() {
-      colorNodeList[j].classList.remove('opacity');
-    }, 2000);
+function loopArray() {
+  
+  loopNodeList();
+  i++;
+  if (i < simonSequence.length) { 
+    loopArray(); 
   }
 }
+
+function loopNodeList() {
+  if (colorNodeList[j].id === simonSequence[i]) {
+    colorNodeList[j].classList.add('opacity');
+    removeOpacity(j);
+  }
+  j++;
+  if (j < colorNodeList.length) { 
+    loopNodeList(); 
+  }
+}
+
+function removeOpacity(j) {
+  setTimeout(function() {
+    colorNodeList[j].classList.remove('opacity');
+  }, 2000);
+}
+
+
+
+// function sequenceEffects() {
+//   for (let i = 0; i < simonSequence.length; i++) {
+//     for (var j = 0; j < colorNodeList.length; j++) {
+//       if (colorNodeList[j].id === simonSequence[i]) {
+//         colorNodeList[j].classList.add('opacity');
+//         removeOpacity(j);
+//       }
+//     }
+//   }
+// }
 
 
 
