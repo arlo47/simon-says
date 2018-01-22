@@ -1,12 +1,12 @@
-// red = 1
-// blue = 2
-// green = 3
-// yellow = 4
-let red = document.getElementById('red');
-let blue = document.getElementById('blue');
-let green = document.getElementById('green');
-let yellow = document.getElementById('yellow');
-
+//UI Elements
+let red = document.getElementById('red');             // red = 1
+let blue = document.getElementById('blue');           // blue = 2
+let green = document.getElementById('green');         // green = 3
+let yellow = document.getElementById('yellow');       // yellow = 4
+//This is for outputting into the DOM
+let says = document.getElementById('says');
+//Play button
+let playBtn = document.getElementById('play-again');
 //node list containing all the above colors
 let colorNodeList = document.querySelectorAll('.circle');
 
@@ -16,15 +16,8 @@ let blueAudio = new Audio('https://s3.amazonaws.com/freecodecamp/simonSound2.mp3
 let greenAudio = new Audio('https://s3.amazonaws.com/freecodecamp/simonSound3.mp3');
 let yellowAudio = new Audio('https://s3.amazonaws.com/freecodecamp/simonSound4.mp3');
 
-//Play button
-let playBtn = document.getElementById('play-again');
-
-//This is for outputting into the DOM
-let says = document.getElementById('says');
-
 //simonSequence is the randomly generated array of colors
 let simonSequence = [];
-
 //userSequence is the array the user generates by clicking on the colors to compare to simonSequence
 let userSequence = [];
 
@@ -83,7 +76,7 @@ let game = {
       yellowAudio.play();
         break;
       default:
-        console.log('game.addToSequence() error');
+        console.log('game.userResponse() error');
     }
       game.compareSequences();
   },
@@ -104,7 +97,6 @@ let game = {
     }
 
     if (userSequence.length === simonSequence.length) {
-      console.log('addToSequence() was invoked.');
       says.textContent = `Correct! Round: ${roundCount}.`;
       //If the two sequences are exactly the same, run addToSequence() again for the next round.
       game.addToSequence();
@@ -117,7 +109,8 @@ let effects = {
     let i = 0;
   
     let interval = setInterval(function() {
-      effects.addRemoveEffect(i);
+      effects.addEffect(i);
+      effects.removeEffect(i);
 
       i++;
       if (i >= simonSequence.length) {
@@ -125,7 +118,7 @@ let effects = {
       }
     }, 800);
   },
-  addRemoveEffect: function(i) {
+  addEffect: function(i) {
     switch (simonSequence[i]) {
       case 'red':
         colorNodeList[0].classList.add('opacity');
@@ -144,8 +137,10 @@ let effects = {
         yellowAudio.play();
         break;
       default:
-        console.log('effects.addRemoveEffect() error (adding)');
+        console.log('effects.addEffect() error');
     }
+  },
+  removeEffect: function(i) {
     setTimeout(function() {
       switch (simonSequence[i]) {
         case 'red':
@@ -161,7 +156,7 @@ let effects = {
           colorNodeList[3].classList.remove('opacity');
           break;
         default:
-          console.log('effects.addRemoveEffect() error (removing)');
+          console.log('effects.removeEffect() error');
       }
     }, 400); //Must be half the setInterval() time
   }
