@@ -7,14 +7,17 @@ let blue = document.getElementById('blue');
 let green = document.getElementById('green');
 let yellow = document.getElementById('yellow');
 
+//node list containing all the above colors
+let colorNodeList = document.querySelectorAll('.circle');
+
 //audio variables
 let redAudio = new Audio('https://s3.amazonaws.com/freecodecamp/simonSound1.mp3');
 let blueAudio = new Audio('https://s3.amazonaws.com/freecodecamp/simonSound2.mp3');
 let greenAudio = new Audio('https://s3.amazonaws.com/freecodecamp/simonSound3.mp3');
 let yellowAudio = new Audio('https://s3.amazonaws.com/freecodecamp/simonSound4.mp3');
 
-//node list containing all the above colors
-let colorNodeList = document.querySelectorAll('.circle');
+//Play button
+let playBtn = document.getElementById('play-again');
 
 //This is for outputting into the DOM
 let says = document.getElementById('says');
@@ -30,30 +33,34 @@ let roundCount = 1;
 
 let game = {
   addToSequence: function() {
-    //This Math generates a random number between 1 and 4 which is then pushed to simonSequence in the switch below
-    let newColor = Math.floor(Math.random() * 4) + 1;
+    //disables the play button, stopping multiple instances of the game to run at a time.
+    playBtn.disabled = true;
     //resets userSequence for the next round
     userSequence.splice(0);
+
+    //Clears the text box if playing again (#says)
+    if (roundCount === 1) {
+      says.textContent = '';
+    }
+
+    //This Math generates a random number between 1 and 4 which is then pushed to simonSequence in the switch below
+    let newColor = Math.floor(Math.random() * 4) + 1;
 
     switch (newColor) {
       case 1:
         simonSequence.push('red');
-        console.log('red');
         break;
       case 2:
         simonSequence.push('blue');
-        console.log('blue');
         break;
       case 3:
         simonSequence.push('green');
-        console.log('green');
         break;
       case 4:
         simonSequence.push('yellow');
-        console.log('yellow');
         break;
       default:
-          console.log('game.addToSequence() error');
+        console.log('game.addToSequence() error');
     }
     roundCount++;
     effects.doEffects();
@@ -76,27 +83,32 @@ let game = {
       yellowAudio.play();
         break;
       default:
-          console.log('game.addToSequence() error');
+        console.log('game.addToSequence() error');
+    }
+      game.compareSequences();
+  },
+  compareSequences: function() {
+    for (let i = 0; i < userSequence.length; i++) {
+      //iterates over both sequences and returns false if they are not exactly the same
+      if (userSequence[i] !== simonSequence[i]) {
+        says.textContent = 'You guessed wrong. Play again?';
+
+        //re-enables the play button
+        playBtn.disabled = false;
+        //resets simonSequence and roundCount
+        simonSequence.splice(0);
+        roundCount = 1;
+
+        return false;
+      }
     }
 
     if (userSequence.length === simonSequence.length) {
-      game.compareSequences();
-    }
-  },
-  compareSequences: function() {
-      for (let i = 0; i < simonSequence.length; i++) {
-        //iterates over both sequences and returns false if they are not exactly the same
-        if (userSequence[i] !== simonSequence[i]) {
-          console.log('User guessed wrong.');
-          says.textContent = 'You guessed wrong. Play again?';
-          return false;
-        }
-      }
-      console.log('Correct!');
-      says.textContent = `Correct! Starting round ${roundCount}.`;
-      
+      console.log('addToSequence() was invoked.');
+      says.textContent = `Correct! Round: ${roundCount}.`;
       //If the two sequences are exactly the same, run addToSequence() again for the next round.
       game.addToSequence();
+    }
   }
 };
 
@@ -106,7 +118,7 @@ let effects = {
   
     let interval = setInterval(function() {
       effects.addRemoveEffect(i);
-  
+
       i++;
       if (i >= simonSequence.length) {
         clearInterval(interval);
@@ -151,11 +163,11 @@ let effects = {
         default:
           console.log('effects.addRemoveEffect() error (removing)');
       }
-    }, 400);
+    }, 400); //Must be half the setInterval() time
   }
 };
 
-red.addEventListener('click', game.userResponse);
-blue.addEventListener('click', game.userResponse);
-green.addEventListener('click', game.userResponse);
-yellow.addEventListener('click', game.userResponse);
+red.addEventListener('mousedown', game.userResponse);
+blue.addEventListener('mousedown', game.userResponse);
+green.addEventListener('mousedown', game.userResponse);
+yellow.addEventListener('mousedown', game.userResponse);
