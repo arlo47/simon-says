@@ -3,82 +3,46 @@ let red = document.getElementById('red');             // red = 1
 let blue = document.getElementById('blue');           // blue = 2
 let green = document.getElementById('green');         // green = 3
 let yellow = document.getElementById('yellow');       // yellow = 4
-//This is for outputting into the DOM
 let says = document.getElementById('says');
-//Play button
 let playBtn = document.getElementById('play-again');
-//node list containing all the above colors
 let colorNodeList = document.querySelectorAll('.circle');
 
-//audio variables
-let redAudio = new Audio('https://s3.amazonaws.com/freecodecamp/simonSound1.mp3');
-let blueAudio = new Audio('https://s3.amazonaws.com/freecodecamp/simonSound2.mp3');
-let greenAudio = new Audio('https://s3.amazonaws.com/freecodecamp/simonSound3.mp3');
-let yellowAudio = new Audio('https://s3.amazonaws.com/freecodecamp/simonSound4.mp3');
-
-//simonSequence is the randomly generated array of colors
+let colors = ['red', 'blue', 'green', 'yellow'];
 let simonSequence = [];
-//userSequence is the array the user generates by clicking on the colors to compare to simonSequence
 let userSequence = [];
-
-//Counter of how many rounds played
 let roundCount = 1;
+
+//audio variables
+let audio = {
+  red: new Audio('https://s3.amazonaws.com/freecodecamp/simonSound1.mp3'),
+  blue: new Audio('https://s3.amazonaws.com/freecodecamp/simonSound2.mp3'),
+  green: new Audio('https://s3.amazonaws.com/freecodecamp/simonSound3.mp3'),
+  yellow: new Audio('https://s3.amazonaws.com/freecodecamp/simonSound4.mp3')
+};
 
 let game = {
   addToSequence: function() {
-    //disables the play button, stopping multiple instances of the game to run at a time.
     playBtn.disabled = true;
-    //resets userSequence for the next round
     userSequence.splice(0);
 
     //Clears the text box if playing again (#says)
     if (roundCount === 1) {
       says.textContent = '';
     }
+    //Generates a number from 1 to 4, no need for +1 because arrays (colors) are 0 based.
+    let randomColor = Math.floor(Math.random() * colors.length);
+    //finds what the string related to the randomly generated number is.
+    let newColor = colors[randomColor];
+    simonSequence.push(newColor);
 
-    //This Math generates a random number between 1 and 4 which is then pushed to simonSequence in the switch below
-    let newColor = Math.floor(Math.random() * 4) + 1;
-
-    switch (newColor) {
-      case 1:
-        simonSequence.push('red');
-        break;
-      case 2:
-        simonSequence.push('blue');
-        break;
-      case 3:
-        simonSequence.push('green');
-        break;
-      case 4:
-        simonSequence.push('yellow');
-        break;
-      default:
-        console.log('game.addToSequence() error');
-    }
     roundCount++;
     effects.doEffects();
   },
   userResponse: function(e) {
-    //e.target.id returns the html id as a string, .push() adds it to userSequence
     userSequence.push(e.target.id);
-    
-    switch (e.target.id) {
-      case 'red':
-        redAudio.play();
-        break;
-      case 'blue':
-        blueAudio.play();
-        break;
-      case 'green':
-      greenAudio.play();
-        break;
-      case 'yellow':
-      yellowAudio.play();
-        break;
-      default:
-        console.log('game.userResponse() error');
-    }
-      game.compareSequences();
+    audio[e.target.id].play();
+
+    game.compareSequences();
   },
   compareSequences: function() {
     for (let i = 0; i < userSequence.length; i++) {
@@ -95,10 +59,8 @@ let game = {
         return false;
       }
     }
-
     if (userSequence.length === simonSequence.length) {
       says.textContent = `Correct! Round: ${roundCount}.`;
-      //If the two sequences are exactly the same, run addToSequence() again for the next round.
       game.addToSequence();
     }
   }
@@ -119,26 +81,26 @@ let effects = {
     }, 800);
   },
   addEffect: function(i) {
+    let colorIndex = -1;
+
     switch (simonSequence[i]) {
       case 'red':
-        colorNodeList[0].classList.add('opacity');
-        redAudio.play();
+        colorIndex = 0;
         break;
       case 'blue':
-        colorNodeList[1].classList.add('opacity');
-        blueAudio.play();
+        colorIndex = 1; 
         break;
       case 'green':
-        colorNodeList[2].classList.add('opacity');
-        greenAudio.play();
+        colorIndex = 2;
         break;
       case 'yellow':
-        colorNodeList[3].classList.add('opacity');
-        yellowAudio.play();
+        colorIndex = 3;
         break;
       default:
         console.log('effects.addEffect() error');
     }
+    colorNodeList[colorIndex].classList.add('opacity');
+    audio[simonSequence[i]].play();
   },
   removeEffect: function(i) {
     setTimeout(function() {
