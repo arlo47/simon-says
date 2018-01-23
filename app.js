@@ -1,3 +1,7 @@
+let simonSequence = [];
+let userSequence = [];
+let roundCount = 1;
+
 //UI Elements
 let red = document.getElementById('red');             // red = 1
 let blue = document.getElementById('blue');           // blue = 2
@@ -7,17 +11,22 @@ let says = document.getElementById('says');
 let playBtn = document.getElementById('play-again');
 let colorNodeList = document.querySelectorAll('.circle');
 
+//Color names
 let colors = ['red', 'blue', 'green', 'yellow'];
-let simonSequence = [];
-let userSequence = [];
-let roundCount = 1;
+//Color Indices
+let colorIndices = {
+  red: 0,
+  blue: 1,
+  green: 2,
+  yellow: 3
+};
 
-//audio variables
+//Audio Elements
 let audio = {
   red: new Audio('https://s3.amazonaws.com/freecodecamp/simonSound1.mp3'),
   blue: new Audio('https://s3.amazonaws.com/freecodecamp/simonSound2.mp3'),
-  green: new Audio('https://s3.amazonaws.com/freecodecamp/simonSound3.mp3'),
-  yellow: new Audio('https://s3.amazonaws.com/freecodecamp/simonSound4.mp3')
+  green: new Audio('https://s3.amazonaws.com/freecodecamp/simonSound4.mp3'),
+  yellow: new Audio('https://s3.amazonaws.com/freecodecamp/simonSound3.mp3')
 };
 
 let game = {
@@ -81,45 +90,18 @@ let effects = {
     }, 800);
   },
   addEffect: function(i) {
-    let colorIndex = -1;
+    let color = simonSequence[i];
+    let colorIndex = colorIndices[color];
 
-    switch (simonSequence[i]) {
-      case 'red':
-        colorIndex = 0;
-        break;
-      case 'blue':
-        colorIndex = 1; 
-        break;
-      case 'green':
-        colorIndex = 2;
-        break;
-      case 'yellow':
-        colorIndex = 3;
-        break;
-      default:
-        console.log('effects.addEffect() error');
-    }
     colorNodeList[colorIndex].classList.add('opacity');
-    audio[simonSequence[i]].play();
+    audio[color].play();
   },
   removeEffect: function(i) {
     setTimeout(function() {
-      switch (simonSequence[i]) {
-        case 'red':
-          colorNodeList[0].classList.remove('opacity');
-          break;
-        case 'blue':
-          colorNodeList[1].classList.remove('opacity');
-          break;
-        case 'green':
-          colorNodeList[2].classList.remove('opacity');
-          break;
-        case 'yellow':
-          colorNodeList[3].classList.remove('opacity');
-          break;
-        default:
-          console.log('effects.removeEffect() error');
-      }
+      let color = simonSequence[i];
+      let colorIndex = colorIndices[color];
+
+      colorNodeList[colorIndex].classList.remove('opacity');
     }, 400); //Must be half the setInterval() time
   }
 };
